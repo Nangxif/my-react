@@ -1,4 +1,4 @@
-// import { useEffect, useRef, useState } from 'react';
+import {  useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 
 // // function App() {
@@ -157,23 +157,23 @@ import React, { useEffect, useState } from "react";
 //     </div>
 //   );
 // };
-const App = () => {
-  const [num, setNum] = useState(0);
-  return (
-    <div
-      onClick={() => {
-        setNum(num + 1);
-        setNum(num + 1);
-        setNum(num + 1);
-        setTimeout(() => {
-          console.log(num);
-        });
-      }}
-    >
-      {num}
-    </div>
-  );
-};
+// const App = () => {
+//   const [num, setNum] = useState(0);
+//   return (
+//     <div
+//       onClick={() => {
+//         setNum(num + 1);
+//         setNum(num + 1);
+//         setNum(num + 1);
+//         setTimeout(() => {
+//           console.log(num);
+//         });
+//       }}
+//     >
+//       {num}
+//     </div>
+//   );
+// };
 // const App = () => {
 //   const [num, setNum] = useState(0);
 //   console.log("render");
@@ -201,5 +201,65 @@ const App = () => {
 //     </div>
 //   );
 // };
+
+function App() {
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
+  useEffect(() => {
+    ref1.current.addEventListener(
+      "click",
+      () => {
+        console.log("ref1 origin capture");
+      },
+      true
+    );
+    ref1.current.addEventListener(
+      "click",
+      () => {
+        console.log("ref1 origin bubble");
+      },
+      false
+    );
+
+    ref2.current.addEventListener(
+      "click",
+      () => {
+        console.log("ref2 origin capture");
+      },
+      true
+    );
+    ref2.current.addEventListener(
+      "click",
+      () => {
+        console.log("ref2 origin bubble");
+      },
+      false
+    );
+  }, []);
+  return (
+    <div
+      onClick={() => {
+        console.log("ref1 bubble");
+      }}
+      onClickCapture={() => {
+        console.log("ref1 capture");
+      }}
+      ref={ref1}
+    >
+      <div
+        onClick={() => {
+          console.log("ref2 bubble");
+        }}
+        onClickCapture={() => {
+          console.log("ref2 capture");
+        }}
+        ref={ref2}
+      >
+        点击
+      </div>
+    </div>
+  );
+  // return <App />;
+}
 const root = document.querySelector("#root");
 ReactDOM.createRoot(root).render(<App />);

@@ -37,9 +37,21 @@ export function initEvent(container: Container, eventType: string) {
 	}
 
 	// 在root节点绑定eventType，然后点击某个元素的时候，e这个Event对象指的就是当前点击的对象，可以通过e.target获取到DOMElement
-	container.addEventListener(eventType, (e) => {
-		dispatchEvent(container, eventType, e);
-	});
+	container.addEventListener(
+		eventType,
+		(e) => {
+			dispatchEvent(container, eventType, e, true);
+		},
+		true
+	);
+
+	container.addEventListener(
+		eventType,
+		(e) => {
+			dispatchEvent(container, eventType, e, false);
+		},
+		false
+	);
 }
 
 // 创建合成事件
@@ -56,7 +68,12 @@ function createSyntheticEvent(e: Event) {
 	};
 	return syntheticEvent;
 }
-function dispatchEvent(container: Container, eventType: string, e: Event) {
+function dispatchEvent(
+	container: Container,
+	eventType: string,
+	e: Event,
+	isCapture: boolean
+) {
 	const targetElement = e.target;
 
 	if (targetElement === null) {
@@ -73,9 +90,11 @@ function dispatchEvent(container: Container, eventType: string, e: Event) {
 	// 2. 构造合成事件
 	const se = createSyntheticEvent(e);
 	// 3. 遍历capture
-	triggerEventFlow(capture, se);
+	if (isCapture) {
+		triggerEventFlow(capture, se);
+	}
 	// 4. 遍历bubble
-	if (!se.__stopPropagation) {
+	if (!isCapture && !se.__stopPropagation) {
 		triggerEventFlow(bubble, se);
 	}
 }
